@@ -1,0 +1,90 @@
+openapi: 3.0.0
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/Yocale-Network/manifest-api/1.0.0
+  - description: Yocale Production
+    url: https://www.yocale.com/manifest/v1
+info:
+  version: "1.0.0"
+  title: Manifest API
+  description: The API for the Yocale public projects
+  contact:
+    name: Yocale dev
+paths:
+  /businesses/{businessKey}:
+    get:
+      tags:
+      - business
+      operationId: getBusiness
+      description: "This endpoint allows the requester to get the information of a specific business by its URL key."
+      parameters: 
+        - $ref: 'Yocale-Network-manifest-business-1.0.0-domain.yaml#/components/parameters/businessKey'
+        - $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/parameters/fields'
+      responses:
+        "404":
+          $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/responses/notFound'
+        "200":
+          $ref: 'Yocale-Network-manifest-business-1.0.0-domain.yaml#/components/responses/retrieveBusinessWithExtraFields'
+  /businesses/{businessKey}/locations:
+    get:
+      operationId: listBusinessLocations
+      tags:
+        - locations
+      description: "Using this endpoint, the requester can retrieve the public list of a specific business locations."
+      parameters: 
+        - $ref: 'Yocale-Network-manifest-business-1.0.0-domain.yaml#/components/parameters/businessKey'
+        - $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/parameters/offset'
+        - $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/parameters/limit'
+      responses:
+        "404":
+          $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/responses/notFound'
+        "200":
+          $ref: 'Yocale-Network-manifest-location-v1.0.0-domain.yaml#/components/responses/listLocations'
+  /businesses/{businessKey}/services:
+    get:
+      tags:
+       - services
+      operationId: listBusinessServices
+      description: "Using this endpoint, the requester can retrieve the public list of a specific business services."
+      parameters: 
+        - $ref: 'Yocale-Network-manifest-business-1.0.0-domain.yaml#/components/parameters/businessKey'
+        - $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/parameters/offset'
+        - $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/parameters/limit'
+      responses:
+        "404":
+          $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/responses/notFound'
+        "200":
+          $ref: 'Yocale-Network-manifest-service-v1.0.0-domain.yaml#/components/responses/listServices'
+  /businesses/{businessKey}/providers:
+    get:
+      tags:
+       - providers
+      operationId: listBusinessProviders
+      description: "Using this endpoint, the requester can retrieve the public list of a specific business providers."
+      parameters: 
+        - $ref: 'Yocale-Network-manifest-business-1.0.0-domain.yaml#/components/parameters/businessKey'
+        - $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/parameters/offset'
+        - $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/parameters/limit'
+      responses:
+        "404":
+          $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/responses/notFound'
+        "200":
+          $ref: 'Yocale-Network-manifest-provider-v1.0.0-domain.yaml#/components/responses/listProviders'
+  /businesses/{businessKey}/reviews:
+    get:
+      tags:
+        - reviews
+      operationId: listBusinessReviews
+      description: "Using this endpoint, the requester can retrieve the public list of a specific business reviews."
+      parameters: 
+        - $ref: 'Yocale-Network-manifest-business-1.0.0-domain.yaml#/components/parameters/businessKey'
+        - $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/parameters/offset'
+        - $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/parameters/limit'
+      responses:
+        "404":
+          $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/responses/notFound'
+        "200":
+          $ref: 'Yocale-Network-manifest-review-v1.0.0-domain.yaml#/components/responses/listReviews'
+components:
+  schemas: {}
