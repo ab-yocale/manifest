@@ -1,0 +1,246 @@
+# OpenAPI version identifier - required for OpenAPI 3.0 domains
+openapi: 3.0.0
+servers:
+  - url: dev.yocale.com
+paths: {}
+#######################
+# Optional info section
+#######################
+info:
+  title: General Components
+  description: Common components for the public REST APIs
+  version: 'v1.0.0'
+  contact:
+    name: Dev team
+
+components:
+
+  ####################
+  # Common data models
+  ####################
+  schemas:
+    id:
+      description: "The resource's id."
+      type: integer
+      format: int32
+      minimum: 1
+      readOnly: true
+    
+    duration:
+      description: "An integer that represents the duration in seconds."
+      type: integer
+      format: int32
+      default: 0
+      example: 3600
+      
+    time:
+      description: "An time display based on 24-hour format."
+      externalDocs:
+        description: "Find more information about the 24-hour format here"
+        url: https://en.wikipedia.org/wiki/24-hour_clock
+      type: string
+      pattern: "^([01]?[0-9]|2[0-3]):[0-5][0-9]$"
+      default: "00:00"
+      example: "13:23"
+    
+    dateTime:
+      description: "A string that represents the date and time in ISO 3399 format."
+      externalDocs:
+        description: "Find more information about the ISO 3339 here"
+        url: https://www.rfc-editor.org/rfc/rfc3339#section-5.6
+      type: string
+      format: date-time
+      example: "2017-07-21T17:32:28Z"
+     
+    phoneNumber:
+      type: object
+      properties:
+        countryName:
+          type: string
+          description: "The country name based on the ISO 3166-1 alpha-2"
+          externalDocs:
+            description: "Find more information about the ISO 3166 here"
+            url: https://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+          example: "CA"
+        countryCode:
+          type: string
+          description: "The specific code represents the calling code of the selected country"
+          externalDocs:
+            description: "Find more information about Country Calling Code here"
+            url: https://en.wikipedia.org/wiki/List_of_country_calling_codes
+          example: test
+          readOnly: true
+        number:
+          description: "A number that represents the telephone number."
+          externalDocs:
+            description: "Find full description here"
+            url: https://en.wikipedia.org/wiki/Telephone_number
+          type: integer
+          format: int32
+          minimum: 5
+          maximum: 25
+          example: 10
+          
+    score:
+      description: "Using a 5-point scale, this is the total score for the resource."
+      type: number
+      format: float64
+      default: 0
+      minimum: 0
+      maximum: 5
+          
+    rate:
+      description: "An object represent people rate to a specific resource such as a business or a service."
+      type: object
+      properties:
+        score:
+          $ref: '#/components/schemas/score'
+        count:
+          description: "The number of individuals who rated the resource."
+          type: number
+          format: int32
+          default: 0
+          minimum: 0
+          
+    currency:
+      description: "The currency information that the business uses."
+      type: object
+      properties:
+        symbol:
+          type: string
+          example: "$"
+        name:
+          type: string
+          example: "Dollar"
+    
+    dimension:
+      description: "A resource's side size in pixels." 
+      type: number
+      format: float64
+      minimum: 0
+      
+    imageDimensions:
+      type: object
+      properties:
+        width:
+          description: "The image width."
+          allOf:
+            - $ref: '#/components/schemas/dimension'
+          example: 120.0
+        height:
+          description: "The image height."
+          allOf:
+            - $ref: '#/components/schemas/dimension'
+          example: 210.2
+          
+    image:
+      description: |
+        An image URL with different available sizes for that image. A Client could load that image by the following pattern:
+          * Calling URL without modifying it
+          * Including one of the sizes as a query string in a URL for a specific sizeg
+      type: object
+      properties:
+        url:
+          type: string
+          pattern: "^(?:http(s)?:\\/\\/)[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:/?#[\\]@!\\$&'\\(\\)\\*\\+,;=.]+$"
+          example: "https://yocaleprodcdn.blob.core.windows.net/yphotos/Permina_Massage_Studios-profile-2454f088989a-6681-43da-9f45-14509561b112.jpg"
+        alt:
+          description: "A short description of the image."
+          type: string
+          default: ""
+          minLength: 0
+          maxLength: 100
+          example: "The yocale logo"
+        sizes:
+          description: "Available image sizes."
+          type: array
+          items:
+            $ref: '#/components/schemas/imageDimensions'
+      
+    imagewithasset:
+      description: |
+        An image URL with different available sizes for that image. A Client could load that image by the following pattern:
+          * Calling URL without modifying it
+          * Including one of the sizes as a query string in a URL for a specific sizeg
+      type: object
+      properties:
+        url:
+          type: string
+          pattern: "^(?:http(s)?:\\/\\/)[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:/?#[\\]@!\\$&'\\(\\)\\*\\+,;=.]+$"
+          example: "https://yocaleprodcdn.blob.core.windows.net/yphotos/Permina_Massage_Studios-profile-2454f088989a-6681-43da-9f45-14509561b112.jpg"
+        alt:
+          description: "A short description of the image."
+          type: string
+          default: ""
+          minLength: 0
+          maxLength: 100
+          example: "The yocale logo"
+        sizes:
+          description: "Available image sizes."
+          type: array
+          items:
+            $ref: '#/components/schemas/imageDimensions'
+        assetkey:
+          description: "key of the asset."
+          type: string
+          default: ""
+          example: "0b38e401-at02-41fa-b5egg-3c298474a051"
+        slugname:
+          type: string
+          default: ""
+        date:
+          $ref: '#/components/schemas/dateTime'
+    
+    color:
+      description: "Color code in hexadecimal."
+      type: string
+      pattern: "^#[a-fA-F0-9]{6}$"
+      example: "#5d5fc4"
+  ####################
+  # Common parameters
+  ####################
+  parameters: {}
+
+  #######################
+  # Common request bodies
+  #######################
+  requestBodies: {}
+  
+  ####################
+  # Common responses
+  ####################
+  responses: {}
+
+  #########################
+  # Common headers
+  # (except request headers - they are defined as parameters)
+  #########################
+  headers: {}
+
+  ######################################
+  # Common examples of input/output data
+  ######################################
+  examples: 
+    currencyDollar:
+      summary: The currency sample, Dollar
+      value:
+        symble: "$"
+        name: "Dollar"
+    
+    currencyDollarCanadien:
+      summary: The currency sample, Dollar Canadien
+      value:
+        symble: "CAD"
+        name: "Dollar Canadien"
+
+  #########################
+  # Common link definitions
+  # See: https://swagger.io/docs/specification/links/
+  #########################
+  links: {}
+
+  #########################
+  # Common callback definitions
+  # See: https://swagger.io/docs/specification/callbacks/
+  #########################
+  callbacks: {}

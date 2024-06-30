@@ -1,0 +1,219 @@
+# OpenAPI version identifier - required for OpenAPI 3.0 domains
+openapi: 3.0.0
+servers:
+  - url: dev.yocale.com
+paths: {}
+#######################
+# Optional info section
+#######################
+info:
+  title: Basic Components
+  description: Basic and Common components for the public REST APIs
+  version: 'v1.0.0'
+  contact:
+    name: Dev team
+components:
+  schemas:
+    ####################
+    # Common data models
+    ####################
+    limit:
+      type: integer
+      format: int32
+      minimum: 10
+      maximum: 500
+      default: 100
+    
+    offset:
+      type: integer
+      format: int32
+      minimum: 0
+      default: 0
+      
+    humanReadableMessage:
+      description: "A short human readable message to display on the screen."
+      type: string
+    
+    responseDetailObject:
+      type: object
+      properties:
+        code:
+          description: "An identifier that represents which kind of issue is happened."
+          type: string
+         #externalDocs:
+           #description: "The list of all codes and their meanings can be found here."
+           #url: ""
+        type:
+          description: "Describe the type of issue you are experiencing."
+          type: string
+          enum:
+            - error
+            - warning
+        name:
+          description: "The field name in the request payload that the error happens."
+          type: string
+        message:
+          $ref: "#/components/schemas/humanReadableMessage"
+        metadata:
+          description: "All additional information regarding the error that occurred."
+          type: object
+    
+    responseModel:
+      type: object
+      properties:
+        status:
+          type: string
+          description: "Representing the request result"
+          default: Ok
+          readOnly: true
+          enum:
+            - Ok
+            - Fail
+        message:
+          $ref: "#/components/schemas/humanReadableMessage"
+        details:
+          type: array
+          items:
+            $ref: "#/components/schemas/responseDetailObject"
+        data: {}    
+    
+    errorResponseModel:
+      allOf:
+        - $ref: "#/components/schemas/responseModel"
+        - type: object
+          properties:
+            status:
+              default: Fail
+    
+    successResponseModel:
+      allOf:
+        - $ref: "#/components/schemas/responseModel"
+        - type: object
+          properties:
+            status:
+              default: Ok
+      
+    listModel:
+      type: object
+      properties:
+        offset:
+          $ref: "#/components/schemas/offset"
+        limit:
+          $ref: "#/components/schemas/limit"
+        hasNext:
+          description: "Whether or not there is more data to load is indicated by this flag."
+          type: boolean
+        items:
+          type: array
+          items: {}
+      
+    listResponseModel:
+      allOf:
+        - $ref: "#/components/schemas/responseModel"
+        - type: object
+          properties:
+            data:
+              $ref: "#/components/schemas/listModel"
+
+  parameters:
+    ####################
+    # Common parameters
+    ####################
+    limit:
+      description: >
+        This number determines the maximum number of items in the result. 
+        There is a specific range for this number, and the server sets the
+        limit equal to the minimum or maximum value of the allowed range 
+        when the requested number is out of it. In this case, the server 
+        will generate a warning regarding the issue in the response.
+      name: limit
+      in: query
+      schema:
+        $ref: '#/components/schemas/limit'
+    offset:
+      description: >
+        The number identifies the number of items that should be skipped before
+        the result items. A number that is less than zero is considered invalid,
+        and the server considers it zero. Also, in this case, the server will
+        generate a warning regarding the issue in the response.
+      name: offset
+      in: query
+      schema:
+        $ref: '#/components/schemas/offset'
+    sortBy:
+      description: >
+        The order in which items appear in the returned list. Ascending or descending orders are determined
+        by the client; if the client doesn't specify the sort type, ascending is considered. 
+        In this case, the acceptable sorts are:
+          * field.asc - Based on the requested field, the items should be sorted in ascending.
+          * field.desc - Based on the requested field, the items should be sorted in descending.
+          * field - Based on the requested field, the items should be sorted, the sort order is default.
+        
+        Order in which the result items should be sorted based on the request.
+        When the client sends more than one order, the server will sort 
+        the result items based on the distinction of the requested orders 
+        from the first requested order to the last one. Furthermore, 
+        the server only will accept specific fields to sort based on them, 
+        and if the requested order is not in the allowed list, it will 
+        ignore it and produce a warning regarding it in the response. 
+      name: sortBy
+      in: query
+      schema:
+        type: array
+        items:
+          type: string
+          pattern: "^([a-zA-Z])+(?:\\.(desc|asc))?$"
+          example: "name.asc"
+    fields:
+      description: >
+         It is possible to modify the final response structure by including the names of the client's preferred
+         fields in this parameter. The main idea is to follow the partial response approch to improve performance,
+         but we only handle some specific endpoints and cases at the moment.
+      name: fields
+      in: query
+      style: form
+      explode: false
+      schema:
+        type: array
+        items:
+          type: string
+          example: "locations"
+
+  #######################
+  # Common request bodies
+  #######################
+  requestBodies: {}
+
+  ####################
+  # Common responses
+  ####################
+  responses:
+    notFound:
+      description: "The requested resource does not exists."
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/errorResponseModel"
+
+  #########################
+  # Common headers
+  # (except request headers - they are defined as parameters)
+  #########################
+  headers: {}
+
+  ######################################
+  # Common examples of input/output data
+  ######################################
+  examples: {}
+
+  #########################
+  # Common link definitions
+  # See: https://swagger.io/docs/specification/links/
+  #########################
+  links: {}
+
+  #########################
+  # Common callback definitions
+  # See: https://swagger.io/docs/specification/callbacks/
+  #########################
+  callbacks: {}

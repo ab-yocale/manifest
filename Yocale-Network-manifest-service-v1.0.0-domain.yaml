@@ -1,0 +1,154 @@
+# OpenAPI version identifier - required for OpenAPI 3.0 domains
+openapi: 3.0.0
+servers:
+  - url: dev.yocale.com
+paths: {}
+
+#######################
+# Optional info section
+#######################
+info:
+  title: Service Components
+  description: Common serivce components for the public REST APIs
+  version: 'v1.0.0'
+
+components:
+
+  ####################
+  # Common data models
+  ####################
+  schemas:
+    price:
+      type: number
+      format: float
+      description: "The service price."
+      minimum: 0
+      maximum: 1000000000
+      default: 0
+      example: 50.55
+      
+    duration:
+      description: "The appointment time in seconds."
+      allOf:
+        - $ref: 'Yocale-Network-manifest-general-v1.0.0-domain.yaml#/components/schemas/duration'
+      minimum: 300
+      maximum: 43200
+      example: 3600
+      
+    appointmentType:
+      description: | 
+        The type of appointment that will result from the service. There are two types of appointments supported currently:
+         * `in-person` - This service will be provided at the selected location only.
+         * `virtual` - The service will be provided via Yocale Meet in a virtual mode.
+      type: string
+      enum:
+        - in-person
+        - virtual
+    category:
+      type: object
+      properties:
+        id:
+          $ref: 'Yocale-Network-manifest-general-v1.0.0-domain.yaml#/components/schemas/id'
+        name:
+          description: "The name of the service category that the business would define."
+          type: string
+          example: "Hair"
+          minLength: 1
+          maxLength: 50
+          
+    service:
+      type: object
+      properties:
+        id:
+          $ref: 'Yocale-Network-manifest-general-v1.0.0-domain.yaml#/components/schemas/id'
+        name:
+          description: "The service name for a business."
+          type: string
+          pattern: "^[^/?@\"\\]\\[_;<>^='{}~]+$"
+          minLength: 2
+          maxLength: 50
+          example: "Hair Cut & Style"
+        price:
+          $ref: '#/components/schemas/price'
+        duration:
+          $ref: '#/components/schemas/duration'  
+        description:
+          type: string
+          minLength: 0
+          maxLength: 250
+          example: |
+            Ross was born Robert Norman Ross in Daytona, Florida, on October 29, 1942. He was raised in Orlando, Florida. After dropping out of school in the ninth grade, Ross served in the U.S. Air Force.
+        image:
+          $ref: 'Yocale-Network-manifest-general-v1.0.0-domain.yaml#/components/schemas/image'
+        appointmetType:
+          $ref: "#/components/schemas/appointmentType"
+        category:
+          $ref: '#/components/schemas/category'
+    
+    listServices:
+      allOf:
+        - $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/schemas/listModel'
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/service'
+  ####################
+  # Common parameters
+  ####################
+  parameters: {}
+
+  #######################
+  # Common request bodies
+  #######################
+  requestBodies: {}
+  ####################
+  # Common responses
+  ####################
+  responses:
+    retrieveService:
+      description: "Information about a single service."
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/schemas/responseModel'
+              - type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/service'
+    listServices:
+      description: "Get a list of services. An empty list will be returned if no reviews are found within the requested offset and limit."
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/schemas/responseModel'
+              - type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/listServices'
+
+  #########################
+  # Common headers
+  # (except request headers - they are defined as parameters)
+  #########################
+  headers: {}
+
+  ######################################
+  # Common examples of input/output data
+  ######################################
+  examples: {}
+
+  #########################
+  # Common link definitions
+  # See: https://swagger.io/docs/specification/links/
+  #########################
+  links: {}
+
+  #########################
+  # Common callback definitions
+  # See: https://swagger.io/docs/specification/callbacks/
+  #########################
+  callbacks: {}

@@ -1,0 +1,146 @@
+# OpenAPI version identifier - required for OpenAPI 3.0 domains
+openapi: 3.0.0
+servers:
+  - url: dev.yocale.com
+paths: {}
+
+#######################
+# Optional info section
+#######################
+info:
+  title: Review Components
+  description: Common review components for the public REST APIs
+  version: 'v1.0.0'
+
+components:
+
+  ####################
+  # Common data models
+  ####################
+  schemas:
+    review:
+      description: "A review has been written by a user"
+      type: object
+      properties:
+        author:
+          $ref: 'Yocale-Network-manifest-user-v1.0.0-domain.yaml#/components/schemas/user'
+        publishedAt:
+          $ref: 'Yocale-Network-manifest-general-v1.0.0-domain.yaml#/components/schemas/dateTime'
+        score:
+          $ref: 'Yocale-Network-manifest-general-v1.0.0-domain.yaml#/components/schemas/score'
+        comment: 
+          type: string
+          minLength: 10
+          maxLength: 250
+
+    listReviews:
+      allOf:
+        - $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/schemas/listModel'
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/review'
+  ####################
+  # Common parameters
+  ####################
+  parameters: {}
+
+  #######################
+  # Common request bodies
+  #######################
+  requestBodies: {}
+
+  ####################
+  # Common responses
+  ####################
+  responses:
+    retrieveReview:
+      description: "Information about a single review."
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/schemas/responseModel'
+              - type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/review'
+    listReviews:
+      description: "Get a list of reviews. An empty list will be returned if no reviews are found within the requested offset and limit."
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/schemas/responseModel'
+              - type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/listReviews'
+
+  #########################
+  # Common headers
+  # (except request headers - they are defined as parameters)
+  #########################
+  headers: {}
+
+  ######################################
+  # Common examples of input/output data
+  ######################################
+  examples:
+    reviewPositive:
+      summary: "Sample of a positive review"
+      value:
+        author: 
+          firstName: "Adam"
+          lastname: "T"
+          avatar: 
+            $ref: 'Yocale-Network-manifest-user-v1.0.0-domain.yaml#/components/examples/userAvatar1'
+        publishedAt: "2022-09-18T11:32:00Z"
+        score: 5
+        comment: | 
+          The staff was great. The receptionists were very helpful and answered all our questions. The room was clean and bright, and room service was always on time. Will be coming back!
+    reviewNegative:
+      summary: "Sample of a negative review"
+      value:
+        author: 
+          firstName: "Sara"
+          lastname: "V"
+          avatar: 
+            $ref: 'Yocale-Network-manifest-user-v1.0.0-domain.yaml#/components/examples/userAvatar2'
+        publishedAt: "2022-07-16T09:12:00Z"
+        score: 1
+        comment: | 
+          Hotel did not get confirmation number from them spent an hour on the phone at the hotel late at night after long day of driving with more to go, with booking to get nowhere. I had confirmation number via email but even when talking to booking they could not get it to work in the hotels system and at the same time wouldn’t cancel the reservation.
+    reviewNeutral:
+      summary: "Sample of a neutral review"
+      value:
+        author: 
+          firstName: "Ahmad"
+          lastname: "H"
+          avatar: 
+            $ref: 'Yocale-Network-manifest-user-v1.0.0-domain.yaml#/components/examples/userAvatar3'
+        publishedAt: "2022-05-12T01:47:19Z"
+        score: 3
+        comment: | 
+          Hotels YES ✔️
+          Car hire and other third party booking ❌
+          
+          If you have a “genius” status, you can get good savings on hotel bookings which is great, and the customer service is good.
+          
+          But for car hire it’s been an absolute headache and waste of time. Book directly through the company instead to save the drama and $$$
+      
+        
+
+  #########################
+  # Common link definitions
+  # See: https://swagger.io/docs/specification/links/
+  #########################
+  links: {}
+
+  #########################
+  # Common callback definitions
+  # See: https://swagger.io/docs/specification/callbacks/
+  #########################
+  callbacks: {}

@@ -1,0 +1,124 @@
+# OpenAPI version identifier - required for OpenAPI 3.0 domains
+openapi: 3.0.0
+servers:
+  - url: dev.yocale.com
+paths: {}
+
+#######################
+# Optional info section
+#######################
+info:
+  title: Provider Components
+  description: Common provider components for the public REST APIs
+  version: 'v1.0.0'
+  contact:
+    name: Dev team
+
+components:
+
+  ####################
+  # Common data models
+  ####################
+  schemas:
+    provider:
+      type: object
+      properties:
+        id:
+          $ref: 'Yocale-Network-manifest-general-v1.0.0-domain.yaml#/components/schemas/id'
+        name:
+          description: "The provider's full name, which is the concatenation of their first and last names."
+          type: string
+          example: "Bob Ross"
+        rate:
+          $ref: 'Yocale-Network-manifest-general-v1.0.0-domain.yaml#/components/schemas/rate'
+        description:
+              type: string
+              minLength: 0
+              maxLength: 250
+              example: |
+                is that haircut is the act of cutting off the hair, often done professionally by a barber, hairstylist,
+                or beautician while hairstyle is the style in which someone's hair has been cut and arranged.
+        image:
+          $ref: 'Yocale-Network-manifest-general-v1.0.0-domain.yaml#/components/schemas/image'
+
+    listProviders:
+      allOf:
+        - $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/schemas/listModel'
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/provider'
+  ####################
+  # Common parameters
+  ####################
+  parameters: {}
+
+  #######################
+  # Common request bodies
+  #######################
+  requestBodies: {}
+  
+  ####################
+  # Common responses
+  ####################
+  responses:
+    retrieveProvider:
+      description: "Information about a single provider."
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/schemas/responseModel'
+              - type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/provider'
+    listProviders:
+      description: "Get a list of providers. Get a list of reviews. An empty list will be returned if no reviews are found within the requested offset and limit."
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/schemas/responseModel'
+              - type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/listProviders'
+
+  #########################
+  # Common headers
+  # (except request headers - they are defined as parameters)
+  #########################
+  headers: {}
+
+  ######################################
+  # Common examples of input/output data
+  ######################################
+  examples:
+    provider1:
+      summary: Sample provider1 data
+      value:
+        # Example value starts here
+        id: 12
+        name: "Bob Ross"
+        rate:
+          score: 4.3
+          count: 25102
+        description: |
+          Ross was born Robert Norman Ross in Daytona, Florida, on October 29, 1942. He was raised in Orlando, Florida. After dropping out of school in the ninth grade, Ross served in the U.S. Air Force. During his service, he took his first painting lesson at an Anchorage, Alaska United Service Organizations club.
+        image:
+          $ref: 'Yocale-Network-manifest-user-v1.0.0-domain.yaml#/components/examples/userAvatar1'
+
+  #########################
+  # Common link definitions
+  # See: https://swagger.io/docs/specification/links/
+  #########################
+  links: {}
+
+  #########################
+  # Common callback definitions
+  # See: https://swagger.io/docs/specification/callbacks/
+  #########################
+  callbacks: {}

@@ -1,0 +1,107 @@
+# OpenAPI version identifier - required for OpenAPI 3.0 domains
+openapi: 3.0.0
+servers:
+  - url: dev.yocale.com
+paths: {}
+
+#######################
+# Optional info section
+#######################
+info:
+  title: User Components
+  description: Common user components for the public REST APIs
+  version: 'v1.0.0'
+  contact:
+    name: Dev team
+
+components:
+
+  ####################
+  # Common data models
+  ####################
+  schemas:
+    user:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: "Bob"
+        lastName:
+          type: string
+          example: "Ross"
+        avatar:
+          $ref: 'Yocale-Network-manifest-general-v1.0.0-domain.yaml#/components/schemas/image'
+  ####################
+  # Common parameters
+  ####################
+  parameters: {}
+
+  #######################
+  # Common request bodies
+  #######################
+  requestBodies: {}
+
+  ####################
+  # Common responses
+  ####################
+  responses: {}
+
+  #########################
+  # Common headers
+  # (except request headers - they are defined as parameters)
+  #########################
+  headers: {}
+
+  ######################################
+  # Common examples of input/output data
+  ######################################
+  examples:
+    
+    userAvatar1:
+      summary: "Sample 1 of a user avatar"
+      value:
+        url: "https://www.w3schools.com/howto/img_avatar.png"
+        alt: "The avatar 1."
+        sizes:
+          - width: 100.1
+            height: 100.5
+          - width: 298
+            height: 298
+          - width: 499
+            height: 498
+    userAvatar2:
+      summary: "Sample 2 of a user avatar"
+      value:
+        url: "https://www.w3schools.com/howto/img_avatar2.png"
+        alt: "The avatar 1."
+        sizes:
+          - width: 100
+            height: 100
+          - width: 298
+            height: 298
+          - width: 499
+            height: 498
+    userAvatar3:
+      summary: "Sample 3 of a user avatar"
+      value:
+        url: "https://www.w3schools.com/w3images/avatar5.png"
+        alt: "The avatar 1."
+        sizes:
+          - width: 100
+            height: 100
+          - width: 298
+            height: 298
+          - width: 499
+            height: 498
+
+  #########################
+  # Common link definitions
+  # See: https://swagger.io/docs/specification/links/
+  #########################
+  links: {}
+
+  #########################
+  # Common callback definitions
+  # See: https://swagger.io/docs/specification/callbacks/
+  #########################
+  callbacks: {}

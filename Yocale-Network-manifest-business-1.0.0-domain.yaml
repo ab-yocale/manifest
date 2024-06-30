@@ -1,0 +1,311 @@
+# OpenAPI version identifier - required for OpenAPI 3.0 domains
+openapi: 3.0.0
+servers:
+  - url: dev.yocale.com
+paths: {}
+#######################
+# Optional info section
+#######################
+info:
+  title: Business Components
+  description: Common business components for the public REST APIs
+  version: '1.0.0'
+  contact:
+    name: Dev team
+components:
+  schemas:
+    language:
+      description: "An abbreviation for a language."
+      type: string
+      enum:
+        - en
+        - fr
+    translations:
+      description: "A list of key-value pair, where the key is the original statement and the value is its translation."
+      type: object
+      additionalProperties:
+        type: string
+    industry:
+      description: "Information about the industry in which the business operates."
+      type: object
+      properties:
+        id:
+          $ref: 'Yocale-Network-manifest-general-v1.0.0-domain.yaml#/components/schemas/id'
+        name:
+          type: string
+    urlKey:
+      description: "A unique key is used for each business as a slug in the URL, and data about that business is retrieved by it."
+      type: string
+      pattern: "(?!.*-$|^-.*|.*-{2,})^(?=.*[a-z])[a-z0-9-]{5,50}$"
+      minLength: 5
+      maxLength: 50
+      example: "yocale-network-corporation"
+    workingHour:
+      description: "An array of working hours for a particular day. An empty array indicates that no working hours were set for that day."
+      type: array
+      items:
+        type: object
+        properties:
+          start:
+            description: "The start time of working."
+            allOf:
+              - $ref: 'Yocale-Network-manifest-general-v1.0.0-domain.yaml#/components/schemas/time'
+          end:
+            description: "The end time of working."
+            allOf:
+              - $ref: 'Yocale-Network-manifest-general-v1.0.0-domain.yaml#/components/schemas/time'
+    renderMethod:
+      description: "Determining how the list should be rendered."
+      type: string
+      enum:
+        - categorized
+        - plain
+        - no-render
+    settingItem:
+      type: object
+      properties:
+        label:
+          type: string
+        renderMethod:
+          $ref: '#/components/schemas/renderMethod'
+        unavailableItems:
+          type: array
+          items:
+            type: string
+    settings:
+      type: object
+      properties:
+        service:
+          allOf:
+            - $ref: '#/components/schemas/settingItem'
+            - type: object
+              properties:
+                unavailableItems:
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                      - price
+                      - duration
+                      - description
+        provider:
+          allOf:
+            - $ref: '#/components/schemas/settingItem'
+            - type: object
+              properties:
+                unavailableItems:
+                  type: array
+                  items:
+                    type: string
+                    enum:
+                      - rate
+        location:
+          allOf:
+            - $ref: '#/components/schemas/settingItem'
+            - type: object
+              properties:
+                unavailableItems:
+                  type: array
+                  items:
+                    type: string
+        review:
+          allOf:
+            - $ref: '#/components/schemas/settingItem'
+            - type: object
+              properties:
+                unavailableItems:
+                  type: array
+                  items:
+                    type: string      
+        appearance:
+          type: object
+          properties:
+            primaryColor: 
+              $ref: 'Yocale-Network-manifest-general-v1.0.0-domain.yaml#/components/schemas/color'
+            secondaryColor:
+              $ref: 'Yocale-Network-manifest-general-v1.0.0-domain.yaml#/components/schemas/color'
+        language:
+          description: "Language settings for the requested business"
+          type: object
+          properties:
+            availabilities:   
+              description: "Languages supported by the requested business."
+              type: array
+              items:
+                $ref: '#/components/schemas/language'
+            default:
+              description: "A language that is selected by the business as the default language."
+              allOf:
+                - $ref: '#/components/schemas/language'
+            translations:
+              type: object
+              properties:
+                en:
+                  $ref: '#/components/schemas/translations'
+                fa:
+                  $ref: '#/components/schemas/translations'
+       
+        
+    businessBasic:
+      type: object
+      properties:
+        key:
+          $ref: '#/components/schemas/urlKey'
+        name:
+          description: "The name of business"
+          type: string
+          minLength: 2
+          maxLength: 50
+          example: "Yocale"
+        rate:
+          $ref: 'Yocale-Network-manifest-general-v1.0.0-domain.yaml#/components/schemas/rate'
+        logo:
+          $ref: 'Yocale-Network-manifest-general-v1.0.0-domain.yaml#/components/schemas/image'
+        coverImages:
+          description: "An array of the business cover images."
+          type: array
+          items:
+            $ref: 'Yocale-Network-manifest-general-v1.0.0-domain.yaml#/components/schemas/image'
+          minLength: 1
+        currency:
+          $ref: 'Yocale-Network-manifest-general-v1.0.0-domain.yaml#/components/schemas/currency'
+        industry:
+          $ref: '#/components/schemas/industry'
+        phoneNumber:
+          $ref: 'Yocale-Network-manifest-general-v1.0.0-domain.yaml#/components/schemas/phoneNumber'
+        description:
+          description: "Business description provided by the business owner."
+          type: string
+          default: ""
+          minLength: 1
+          maxLength: 4000
+        workingHours:
+          description: "A dictionary of business working hours. Each key represents a day of the week, and the value represents its working hours."
+          type: object
+          properties:
+            monday:
+              $ref: '#/components/schemas/workingHour'
+            tuesday:
+              $ref: '#/components/schemas/workingHour'
+            wednesday:
+              $ref: '#/components/schemas/workingHour'
+            thursday:
+              $ref: '#/components/schemas/workingHour'
+            friday:
+              $ref: '#/components/schemas/workingHour'
+            saturday:
+              $ref: '#/components/schemas/workingHour'
+            sunday:
+              $ref: '#/components/schemas/workingHour'
+        publicLinks:
+          description: "A dictionary of business public links. Each key represents a public website such as a social media, and the value represents its URL."
+          type: object
+          properties:
+            website:
+              type: string
+              pattern: "^(?:http(s)?:\\/\\/)[\\w.-]+(?:\\.[\\w\\.-]+)+[\\w\\-\\._~:/?#[\\]@!\\$&'\\(\\)\\*\\+,;=.]+$"
+              example: "https://business.yocale.com/"
+            facebook:
+              type: string
+              pattern: "^https?:\\/\\/www\\.facebook\\.com\\/.*?$"
+              example: "https://www.facebook.com/yocaleNetwork"
+            twitter:
+              type: string
+              pattern: "^https?:\\/\\/www\\.twitter\\.com\\/.*?$"
+              example: "https://www.twitter.com/yocalenetwork"
+            instagram:
+              type: string
+              pattern: "^https?:\\/\\/www\\.instagram\\.com\\/.*?$"
+              example: "https://www.instagram.com/yocale"
+            youtube:
+              type: string
+              pattern: "^https?:\\/\\/www\\.youtube\\.com\\/channel\\/.*?$"
+              example: "https://www.youtube.com/channel/UCkdnEpAft3fmRoKpECPFvfQ"
+        widget:
+          description: "The information regarding business widget"
+          type: object
+          properties:
+            uniqueIdentifier:
+              type: string
+            settings:
+              $ref: '#/components/schemas/settings'
+    businessWithExtraFields:
+      allOf:
+        - $ref: '#/components/schemas/businessBasic'
+        - type: object
+          properties:
+            locations:
+              $ref: 'Yocale-Network-manifest-location-v1.0.0-domain.yaml#/components/schemas/listLocations'
+            services:
+              $ref: 'Yocale-Network-manifest-service-v1.0.0-domain.yaml#/components/schemas/listServices'
+            providers:
+              $ref: 'Yocale-Network-manifest-provider-v1.0.0-domain.yaml#/components/schemas/listProviders'
+            reviews:
+              $ref: 'Yocale-Network-manifest-review-v1.0.0-domain.yaml#/components/schemas/listReviews'
+  ####################
+  # Common parameters
+  ####################
+  parameters:
+    businessKey:
+      name: businessKey
+      description: "The unique identifier of the business user wants to fetch its data"
+      in: path
+      required: true
+      schema:
+       $ref: "#/components/schemas/urlKey"
+
+  #######################
+  # Common request bodies
+  #######################
+  requestBodies: {}
+
+  ####################
+  # Common responses
+  ####################
+  responses:
+    retrieveBusiness:
+      description: "Information about a single business."
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/schemas/responseModel'
+              - type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/businessBasic'
+    
+    retrieveBusinessWithExtraFields:
+      description: "Information about a single business with extra fields."
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/schemas/responseModel'
+              - type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/businessWithExtraFields'
+
+  #########################
+  # Common headers
+  # (except request headers - they are defined as parameters)
+  #########################
+  headers: {}
+
+  ######################################
+  # Common examples of input/output data
+  ######################################
+  examples: {}
+
+  #########################
+  # Common link definitions
+  # See: https://swagger.io/docs/specification/links/
+  #########################
+  links: {}
+
+  #########################
+  # Common callback definitions
+  # See: https://swagger.io/docs/specification/callbacks/
+  #########################
+  callbacks: {}

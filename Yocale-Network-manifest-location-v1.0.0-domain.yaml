@@ -1,0 +1,204 @@
+# OpenAPI version identifier - required for OpenAPI 3.0 domains
+openapi: 3.0.0
+servers:
+  - url: dev.yocale.com
+paths: {}
+
+#######################
+# Optional info section
+#######################
+info:
+  title: Location Components
+  description: Common location components for the public REST APIs
+  version: 'v1.0.0'
+
+components:
+
+  ####################
+  # Common data models
+  ####################
+  schemas:
+    geoLocation:
+      type: object
+      description: "The goemetrics information of a specific location."
+      properties:
+        latitude:
+          type: number
+          format: float
+          minimum: -90
+          maximum: 90
+          example: 49.3137806
+        longitude:
+          type: number
+          format: float
+          minimum: -180
+          maximum: 180
+          example: -123.0974644
+          
+    address:
+      type: object
+      properties:
+        placeId: 
+          type: string
+          description: "An identity that is returned by Google in the response of its Google Map API for a specific location. This id is unique per each fetched address, and we could use it to retrieve the same data from the Google Map API whenever needed."
+          externalDocs: 
+            url: https://developers.google.com/maps/documentation/places/web-service/place-id
+          example: "ChIJMxaE48lxhlQRILAQxS29MqA"
+        plusCode:
+          type: string
+          description: "Plus code is the same Open location code that google will return in the response of each asked location. We don't have any specific use for this code yet, but since it is a global code and standard accepted by many other providers, we consider it part of the given address."
+          externalDocs:
+            url: https://maps.google.com/pluscodes/
+          minLength: 2
+          maxLength: 11
+          example: "84XR8W73+G2"
+        geoLocation:
+          allOf:
+            - $ref: "#/components/schemas/geoLocation"
+        country:
+          type: string
+          description: "The country name of the given address."
+          minLength: 1
+          example: "Canada"
+        state:
+          type: string
+          description: "The state name of the given address."
+          minLength: 1
+          example: "BC"
+        city:
+          type: string
+          description: "The city name of the given address."
+          minLength: 1
+          example: "North Vancouver"
+        route:
+          type: string
+          description: "The street information of the given address."
+          example: "889 Harbourside Dr"
+        postalCode:
+          type: string
+          description: "The postal code of the given address."
+          example: "V7P 3S1"
+        unit:
+          type: string
+          description: "An optional string would be provided by the user that could be more information about the given address, such as its unit number."
+          pattern: "^[^/?@\"\\]\\[_;<>^='{}~]+$"
+          maxLength: 20
+          example: "#350"
+        full: 
+          type: string
+          description: "A human-readable format of the location address."
+          example: "889 Harbourside Dr #350, North Vancouver, BC V7P 3S1" 
+    
+    location:
+      type: object
+      properties:
+        id:
+          $ref: 'Yocale-Network-manifest-general-v1.0.0-domain.yaml#/components/schemas/id'
+        name:
+          description: "The location name for a business must be unique and must be a string containing 2 to 50 characters inclusively."
+          type: string
+          pattern: "^[^/?@\"\\]\\[_;<>^='{}~]+$"
+          minLength: 2
+          maxLength: 50
+          example: "Yocale"
+        phone:
+          $ref: 'Yocale-Network-manifest-general-v1.0.0-domain.yaml#/components/schemas/phoneNumber'
+        address:
+          $ref: '#/components/schemas/address'
+          
+    listLocations:
+      allOf:
+        - $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/schemas/listModel'
+        - type: object
+          properties:
+            items:
+              type: array
+              items:
+                $ref: '#/components/schemas/location'
+  ####################
+  # Common parameters
+  ####################
+  parameters: {}
+
+  #######################
+  # Common request bodies
+  #######################
+  requestBodies: {}
+
+  ####################
+  # Common responses
+  ####################
+  responses: 
+    retrieveLocation:
+      description: "Information about a single location."
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/schemas/responseModel'
+              - type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/location'
+    listLocations:
+      description: "Get a list of locations. An empty list will be returned if no reviews are found within the requested offset and limit."
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: 'Yocale-Network-manifest-basic-v1.0.0-domain.yaml#/components/schemas/responseModel'
+              - type: object
+                properties:
+                  data:
+                    $ref: '#/components/schemas/listLocations'
+
+  #########################
+  # Common headers
+  # (except request headers - they are defined as parameters)
+  #########################
+  headers: {}
+
+  ######################################
+  # Common examples of input/output data
+  ######################################
+  examples:
+    locationYocale:
+      summary: Sample yocale office data
+      value:
+        id: 17
+        name: "Yocale Office"
+        phone:
+          countryName: "CA"
+          countryCode: 1
+          number: 7789862253
+        address:
+          displayAddress: "889 Harbourside Dr #350, North Vancouver, BC V7P 3S1"
+          geoLocation:
+            latitude: 49.3137806
+            longitude: -123.0974644
+    locationGoogleAnnArbor:
+      summary: Sample google location data
+      value:
+        id: 1
+        name: "Google-Ann Arbor"
+        phone:
+          countryName: "US"
+          countryCode: 1
+          number: 7343326500
+        address:
+          displayAddress: "2300 Traverwood Dr. Ann Arbor, MI 48105"
+          geoLocation:
+            latitude: 42.3063848
+            longitude: -83.7140833
+
+  #########################
+  # Common link definitions
+  # See: https://swagger.io/docs/specification/links/
+  #########################
+  links: {}
+
+  #########################
+  # Common callback definitions
+  # See: https://swagger.io/docs/specification/callbacks/
+  #########################
+  callbacks: {}
